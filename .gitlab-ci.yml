@@ -1,10 +1,12 @@
 stages:
   - build
   - test
+  - frontend_build
+  - lint
 
-# --------------------------
-# Backend Build Stage
-# --------------------------
+# ================================
+# Backend Build
+# ================================
 backend_build:
   stage: build
   image: node:18
@@ -13,14 +15,18 @@ backend_build:
     - cd backend
     - npm install
     - npm run test:build
+  cache:
+    key: backend-cache
+    paths:
+      - backend/node_modules/
   artifacts:
     paths:
-      - backend/node_modules
+      - backend/node_modules/
     expire_in: 1h
 
-# --------------------------
-# Backend Test Stage
-# --------------------------
+# ================================
+# Backend Tests
+# ================================
 backend_tests:
   stage: test
   image: node:18
@@ -34,5 +40,45 @@ backend_tests:
   artifacts:
     when: always
     reports:
-      junit: reports/junit.xml
-  allow_failure: false
+      junit: backend/reports/junit.xml
+
+# ================================
+# Frontend Build
+# ================================
+frontend_build:
+  stage: frontend_build
+  image: node:18
+  script:
+    - echo "Building Frontend (Vite)…"
+    - cd frontend
+    - npm install
+    - npm run build
+  cache:
+    key: frontend-cache
+    paths:
+      - frontend/node_modules/
+  artifacts:
+    paths:
+      - frontend/dist/
+    expire_in: 1h
+
+# ================================
+# ESLint Check
+# ================================
+eslint_check:
+  stage: lint
+  image: node:18
+  needs:
+#    - backend_build
+    - frontend_build
+  script:
+    - cd backend
+    - npm install
+    - npm run lint -- --format compact >> ../eslint-report.txt
+    - cd ../frontend
+    - npm install
+    - npm run lint -- --format compact >> ../eslint-report.txt
+  artifacts:
+    paths:
+      - eslint-report.txt
+    expire_in: 1h
