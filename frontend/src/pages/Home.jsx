@@ -1,28 +1,14 @@
+import ProductGrid from "../components/ProductGrid";
+
 export default function Home() {
   return (
-    <div style={{ padding: "1.5rem" }}>
-      <h1>Welcome to the DevOps E-Commerce Platform</h1>
-      <p>This is Section 1 – Basic Layout Working!</p>
+    <div style={{ padding: "2rem" }}>
+      <h1 style={{ marginBottom: "1rem" }}>Products</h1>
+      <p style={{ marginBottom: "2rem", color: "#555" }}>
+        Browse our latest items from the DevOps E-Commerce demo store.
+      </p>
 
-      <div style={{
-        marginTop: "2rem",
-        padding: "1rem",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        width: "250px"
-      }}>
-        <h3>Sample Product</h3>
-        <p>Price: $49.99</p>
-        <button style={{
-          padding: "0.5rem 1rem",
-          background: "#333",
-          color: "white",
-          border: "none",
-          borderRadius: "5px"
-        }}>
-          Add to Cart
-        </button>
-      </div>
+      <ProductGrid />
     </div>
   );
 }
