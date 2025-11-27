@@ -1,0 +1,38 @@
+stages:
+  - build
+  - test
+
+# --------------------------
+# Backend Build Stage
+# --------------------------
+backend_build:
+  stage: build
+  image: node:18
+  script:
+    - echo "Building Backend..."
+    - cd backend
+    - npm install
+    - npm run test:build
+  artifacts:
+    paths:
+      - backend/node_modules
+    expire_in: 1h
+
+# --------------------------
+# Backend Test Stage
+# --------------------------
+backend_tests:
+  stage: test
+  image: node:18
+  script:
+    - echo "Running Backend Tests..."
+    - cd backend
+    - npm install
+    - npm test
+  needs:
+    - backend_build
+  artifacts:
+    when: always
+    reports:
+      junit: reports/junit.xml
+  allow_failure: false

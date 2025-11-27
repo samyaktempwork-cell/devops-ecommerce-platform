@@ -1,15 +1,16 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 
-app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
-});
+// Serve static images
+app.use("/images", express.static(path.join(__dirname, "../frontend/public/images")));
 
+// Product list
 app.get("/products", (req, res) => {
-  res.json([
+  const products = [
     {
       id: 1,
       name: "Wireless Mouse",
@@ -34,9 +35,57 @@ app.get("/products", (req, res) => {
       image: "/images/laptop.png",
       description: "High-performance laptop for gaming and work."
     }
-  ]);
+  ];
+
+  res.json(products);
+});
+
+// Single product
+app.get("/products/:id", (req, res) => {
+  const id = parseInt(req.params.id, 10);
+
+  const products = [
+    {
+      id: 1,
+      name: "Wireless Mouse",
+      price: 19.99,
+      category: "Accessories",
+      image: "/images/mouse.png",
+      description: "A smooth and responsive wireless mouse."
+    },
+    {
+      id: 2,
+      name: "Mechanical Keyboard",
+      price: 59.99,
+      category: "Accessories",
+      image: "/images/keyboard.png",
+      description: "RGB mechanical keyboard with blue switches."
+    },
+    {
+      id: 3,
+      name: "Gaming Laptop",
+      price: 899.99,
+      category: "Computputers",
+      image: "/images/laptop.png",
+      description: "High-performance laptop for gaming and work."
+    }
+  ];
+
+  const product = products.find((p) => p.id === id);
+
+  if (!product) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+
+  res.json(product);
 });
 
 
+if (process.env.NODE_ENV !== "test") {
+  const port = 4000;
+  app.listen(port, () => {
+    console.log("Backend running on port", port);
+  });
+}
 
-app.listen(4000, () => console.log("Backend running on port 4000"));
+module.exports = app;

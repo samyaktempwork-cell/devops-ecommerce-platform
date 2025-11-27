@@ -1,11 +1,17 @@
-import Navbar from "./components/Navbar";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
+import ProductDetails from "./pages/ProductDetails";
+import Navbar from "./components/Navbar";
 
 export default function App() {
   return (
-    <div style={{ fontFamily: "Arial, sans-serif" }}>
+    <div>
       <Navbar />
-      <Home />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
+      </Routes>
     </div>
   );
 }
